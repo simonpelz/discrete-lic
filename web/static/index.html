@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>discrete-lic</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <h1>discrete-lic</h1>
+    <span class="tagline">Line Integral Convolution over discrete RGB primaries</span>
+  </div>
+  <nav>
+    <button class="tab active" data-panel="panel-gallery">Gallery</button>
+    <button class="tab" data-panel="panel-generator">Generator</button>
+  </nav>
+</header>
+
+<!-- ── Gallery ──────────────────────────────────────────────── -->
+
+<div class="panel active" id="panel-gallery">
+  <div class="gallery-grid" id="gallery-grid">
+    <p style="color:var(--muted);font-family:var(--font-mono)">Loading…</p>
+  </div>
+</div>
+
+<!-- ── Lightbox ─────────────────────────────────────────────── -->
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+  <button class="lightbox-close" id="lightbox-close" aria-label="Close">✕</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<!-- ── Generator ────────────────────────────────────────────── -->
+
+<div class="panel" id="panel-generator">
+  <div class="generator-layout">
+
+    <!-- Controls -->
+    <div class="controls">
+
+      <div class="control-group">
+        <label>Field</label>
+        <select id="field-select">
+          <option value="rotation">rotation</option>
+          <option value="perlin_curl">perlin_curl</option>
+          <option value="double_vortex">double_vortex</option>
+          <option value="spiral">spiral</option>
+          <option value="wave">wave</option>
+          <option value="saddle">saddle</option>
+          <option value="source">source</option>
+          <option value="sink">sink</option>
+          <option value="shear">shear</option>
+          <option value="uniform">uniform</option>
+          <option value="complex">complex (custom)</option>
+          <option value="mhd_cluster">mhd_cluster (yt)</option>
+          <option value="wd_merger">wd_merger (yt)</option>
+        </select>
+      </div>
+
+      <div class="control-group collapsible hidden" id="complex-row">
+        <label>f(z) expression</label>
+        <input type="text" id="field-expr" value="z**2" placeholder="e.g. z**2, np.sin(z*4), 1/z">
+      </div>
+
+      <div id="yt-notice" class="collapsible hidden" style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:10px 12px;font-family:var(--font-mono);font-size:0.75rem;color:var(--muted)">
+        This field requires <strong style="color:var(--text)">yt</strong> and will auto-download
+        ~1.5 GB of simulation data on first use.
+        Install with: <code style="color:var(--accent)">pip install -r requirements-yt.txt</code>
+      </div>
+
+      <hr class="divider">
+
+      <div class="control-group">
+        <label>Color mode</label>
+        <select id="color-select">
+          <option value="pure_rgb">pure_rgb — discrete RGB primaries</option>
+          <option value="angle_hsv">angle_hsv — hue from flow direction</option>
+          <option value="colormap">colormap — matplotlib colormap</option>
+          <option value="rgb">rgb — direct color LIC</option>
+          <option value="hsv_noise">hsv_noise — LIC on value channel</option>
+        </select>
+      </div>
+
+      <div class="control-group collapsible" id="pure-opts">
+        <label>Pure RGB mode</label>
+        <select id="pure-mode-select">
+          <option value="stochastic">stochastic — per-pixel sampling</option>
+          <option value="streamline">streamline — fibre-painted</option>
+        </select>
+        <label style="margin-top:8px">Sharpness</label>
+        <div class="slider-row">
+          <input type="range" id="sharpen-slider" min="1" max="10" step="0.5" value="2.5">
+          <span class="slider-val">2.5</span>
+        </div>
+      </div>
+
+      <div class="control-group collapsible hidden" id="colormap-row">
+        <label>Colormap</label>
+        <select id="colormap-select">
+          <option>viridis</option><option>plasma</option><option>inferno</option>
+          <option>magma</option><option>cividis</option><option>turbo</option>
+          <option>coolwarm</option><option>RdYlBu</option><option>Spectral</option>
+        </select>
+      </div>
+
+      <hr class="divider">
+
+      <div class="control-group">
+        <label>Pixel mode</label>
+        <div class="toggle-row">
+          <button class="toggle-btn active" data-mode="voronoi">Voronoi</button>
+          <button class="toggle-btn" data-mode="grid">Grid</button>
+        </div>
+      </div>
+
+      <div class="control-group" id="voronoi-cells-row">
+        <label>Voronoi cells</label>
+        <div class="slider-row">
+          <input type="range" id="cells-slider" min="100" max="3000" step="100" value="800">
+          <span class="slider-val">800</span>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label>Steps</label>
+        <div class="slider-row">
+          <input type="range" id="steps-slider" min="5" max="80" step="5" value="30">
+          <span class="slider-val">30</span>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label>Kernel</label>
+        <select id="kernel-select">
+          <option value="box">box</option>
+          <option value="gaussian">gaussian</option>
+          <option value="raised_cosine">raised_cosine</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label>Contrast enhance</label>
+        <select id="enhance-select">
+          <option value="stretch">stretch (default)</option>
+          <option value="equalize">equalize</option>
+          <option value="gamma">gamma</option>
+          <option value="none">none</option>
+        </select>
+      </div>
+
+      <hr class="divider">
+
+      <div class="control-group" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div>
+          <label>Width px</label>
+          <input type="number" id="width-input" value="600" min="64" max="1024" step="64">
+        </div>
+        <div>
+          <label>Height px</label>
+          <input type="number" id="height-input" value="600" min="64" max="1024" step="64">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label>Seed</label>
+        <input type="number" id="seed-input" value="42">
+      </div>
+
+      <button class="btn-generate" id="btn-generate">Generate</button>
+    </div>
+
+    <!-- Result -->
+    <div class="result-area">
+      <div class="result-placeholder" id="result-placeholder">
+        press Generate
+      </div>
+      <img class="result-img" id="result-img" src="" alt="generated image" style="display:none">
+      <div class="result-actions" id="result-actions" style="display:none">
+        <a class="btn-download" id="btn-download" href="#" download="lic.png">Download PNG</a>
+      </div>
+      <span class="status-text" id="status-text"></span>
+    </div>
+
+  </div>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

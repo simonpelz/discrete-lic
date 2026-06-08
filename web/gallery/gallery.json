@@ -1,0 +1,58 @@
+[
+  {
+    "filename": "pure_rgb_perlin_voronoi.png",
+    "caption": "Pure RGB \u00b7 Perlin curl \u00b7 Voronoi"
+  },
+  {
+    "filename": "pure_rgb_rotation_voronoi.png",
+    "caption": "Pure RGB \u00b7 Rotation \u00b7 Voronoi"
+  },
+  {
+    "filename": "pure_rgb_spiral_voronoi.png",
+    "caption": "Pure RGB \u00b7 Spiral \u00b7 Voronoi"
+  },
+  {
+    "filename": "pure_rgb_double_vortex_voronoi.png",
+    "caption": "Pure RGB \u00b7 Double vortex \u00b7 Voronoi"
+  },
+  {
+    "filename": "pure_rgb_wave_voronoi.png",
+    "caption": "Pure RGB \u00b7 Wave \u00b7 Voronoi"
+  },
+  {
+    "filename": "pure_rgb_saddle_voronoi.png",
+    "caption": "Pure RGB \u00b7 Saddle \u00b7 Voronoi"
+  },
+  {
+    "filename": "pure_rgb_complex_voronoi.png",
+    "caption": "Pure RGB \u00b7 z\u00b2 \u00b7 Voronoi"
+  },
+  {
+    "filename": "pure_rgb_perlin_grid.png",
+    "caption": "Pure RGB \u00b7 Perlin curl \u00b7 Grid"
+  },
+  {
+    "filename": "angle_hsv_perlin_voronoi.png",
+    "caption": "Angle HSV \u00b7 Perlin curl \u00b7 Voronoi"
+  },
+  {
+    "filename": "angle_hsv_double_vortex.png",
+    "caption": "Angle HSV \u00b7 Double vortex \u00b7 Grid"
+  },
+  {
+    "filename": "angle_hsv_complex.png",
+    "caption": "Angle HSV \u00b7 sin(4z) \u00b7 Grid"
+  },
+  {
+    "filename": "colormap_wave_voronoi.png",
+    "caption": "Plasma colormap \u00b7 Wave \u00b7 Voronoi"
+  },
+  {
+    "filename": "colormap_spiral.png",
+    "caption": "Inferno colormap \u00b7 Spiral \u00b7 Grid"
+  },
+  {
+    "filename": "rgb_perlin_voronoi.png",
+    "caption": "RGB noise \u00b7 Perlin curl \u00b7 Voronoi"
+  }
+]

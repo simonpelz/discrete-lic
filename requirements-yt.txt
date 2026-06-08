@@ -1,0 +1,4 @@
+# Optional: yt-backed fields (mhd_cluster, wd_merger)
+# These require ~1.5 GB of sample data downloaded on first use via yt.load_sample()
+-r requirements.txt
+yt>=4.3
