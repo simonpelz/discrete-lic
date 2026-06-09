@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>discrete-lic</title>
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --surface: #161616;
+      --border: #2a2a2a;
+      --text: #e0e0e0;
+      --muted: #666;
+      --accent: #c8ff00;
+      --font-mono: "JetBrains Mono", "Fira Mono", "Cascadia Code", monospace;
+      --font-sans: "Inter", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 52px 24px 40px;
+    }
+
+    h1 {
+      font-family: var(--font-mono);
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+
+    .desc {
+      color: var(--muted);
+      max-width: 560px;
+      font-size: 0.95rem;
+    }
+
+    .desc strong { color: var(--text); }
+
+    .links {
+      margin-top: 20px;
+      display: flex;
+      gap: 16px;
+    }
+
+    .links a {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.15s;
+    }
+
+    .links a:hover { border-color: var(--accent); }
+
+    /* ── Gallery ── */
+    .gallery {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px 64px;
+    }
+
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      margin-bottom: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 10px;
+    }
+
+    .tile {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+
+    .tile:hover {
+      border-color: #555;
+      transform: translateY(-2px);
+    }
+
+    .tile img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+    }
+
+    .tile-caption {
+      padding: 7px 9px;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ── Lightbox ── */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+    .lightbox.open { display: flex; }
+
+    .lightbox img {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+    }
+
+    .lb-close {
+      position: absolute;
+      top: 16px; right: 20px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1.4rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .lb-close:hover { color: var(--text); }
+
+    /* ── Explainer ── */
+    .explainer {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px 64px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+
+    @media (max-width: 640px) {
+      .explainer { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .explainer h2 {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      margin-bottom: 14px;
+    }
+
+    .explainer p {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.7;
+    }
+
+    .explainer p + p { margin-top: 10px; }
+
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.82em;
+      color: var(--accent);
+    }
+
+    pre {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 14px 16px;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text);
+      line-height: 1.6;
+      margin-top: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>discrete-lic</h1>
+  <p class="desc">
+    <strong>Line Integral Convolution over discrete RGB primaries.</strong>
+    Each noise pixel is exactly one pure color — red, green, or blue.
+    LIC convolution smears these primaries along streamlines of a vector field.
+    Every output pixel is still one primary; which one depends on which color
+    dominated its streamline.
+  </p>
+  <div class="links">
+    <a href="https://github.com/YOURNAME/discrete-lic">GitHub</a>
+    <a href="https://github.com/YOURNAME/discrete-lic#cli-reference">CLI reference</a>
+    <a href="https://github.com/YOURNAME/discrete-lic#how-it-works">How it works</a>
+  </div>
+</header>
+
+<div class="gallery">
+  <div class="section-label">Gallery</div>
+  <div class="grid" id="grid">
+    <p style="color:var(--muted);font-family:var(--font-mono);font-size:0.8rem">Loading…</p>
+  </div>
+</div>
+
+<div class="explainer">
+  <div>
+    <h2>What is discrete-primary LIC?</h2>
+    <p>
+      Standard LIC convolves a white-noise texture along streamlines of a vector field,
+      producing a smooth, oriented texture. <strong style="color:var(--text)">Discrete LIC</strong>
+      replaces white noise with a texture where every pixel is exactly one of three pure
+      primaries — (255,0,0), (0,255,0), or (0,0,255).
+    </p>
+    <p>
+      After convolution, each output pixel holds a probability distribution over the three
+      primaries. A sharpness exponent is applied, then one primary is sampled. The result
+      reveals flow topology as a mosaic: every pixel is still one pure color, but like-colored
+      pixels cluster along streamlines.
+    </p>
+    <p>
+      This mode (<code>--color pure_rgb</code>) has no practical signal-processing use.
+      It exists because it looks interesting.
+    </p>
+  </div>
+  <div>
+    <h2>Quick start</h2>
+    <p>Clone and run — no build step.</p>
+    <pre>git clone https://github.com/YOURNAME/discrete-lic
+cd discrete-lic
+pip install -r requirements.txt
+
+# Voronoi-pixel mode (~1 s)
+python src/lic_main.py \
+  --field perlin_curl \
+  --color pure_rgb \
+  --pixel-mode voronoi
+
+# Interactive web preview
+uvicorn web.server:app --reload
+# → http://localhost:8000</pre>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" id="lb-close">✕</button>
+  <img id="lb-img" src="" alt="">
+</div>
+
+<script>
+const BASE = (() => {
+  // When served via GitHub Pages, images live at the repo root.
+  // When served locally (uvicorn), the gallery endpoint is at /gallery/*.
+  // Detect by checking if we're on a gh-pages-style origin.
+  const loc = window.location;
+  // If served from the file or a GitHub Pages URL, use relative path to web/gallery/
+  return "web/gallery/";
+})();
+
+async function loadGallery() {
+  const grid = document.getElementById("grid");
+  let items;
+  try {
+    const r = await fetch(BASE + "gallery.json");
+    items = await r.json();
+  } catch {
+    grid.innerHTML = '<p style="color:var(--muted);font-family:var(--font-mono)">Gallery not found. Run <code>python scripts/generate_gallery.py</code> first.</p>';
+    return;
+  }
+
+  grid.innerHTML = "";
+  items.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "tile";
+    const img = document.createElement("img");
+    img.src = BASE + item.filename;
+    img.alt = item.caption;
+    img.loading = "lazy";
+    img.addEventListener("click", () => openLB(BASE + item.filename));
+    const cap = document.createElement("div");
+    cap.className = "tile-caption";
+    cap.textContent = item.caption;
+    div.appendChild(img);
+    div.appendChild(cap);
+    grid.appendChild(div);
+  });
+}
+
+const lb    = document.getElementById("lightbox");
+const lbImg = document.getElementById("lb-img");
+function openLB(src) { lbImg.src = src; lb.classList.add("open"); }
+document.getElementById("lb-close").addEventListener("click", () => lb.classList.remove("open"));
+lb.addEventListener("click", e => { if (e.target === lb) lb.classList.remove("open"); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") lb.classList.remove("open"); });
+
+loadGallery();
+</script>
+</body>
+</html>
