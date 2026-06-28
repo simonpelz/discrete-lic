@@ -1,0 +1,14 @@
+{
+  "field": "rotation",
+  "pixel_mode": "grid",
+  "noise": "pure_rgb",
+  "color": "pure_rgb",
+  "pure_mode": "stochastic",
+  "pure_sharpen": 2.5,
+  "steps": 30,
+  "kernel": "box",
+  "enhance": "stretch",
+  "width": 512,
+  "height": 512,
+  "seed": 17
+}

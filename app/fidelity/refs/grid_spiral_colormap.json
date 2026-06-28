@@ -1,0 +1,12 @@
+{
+  "field": "spiral",
+  "pixel_mode": "grid",
+  "noise": "white",
+  "color": "colormap",
+  "colormap": "plasma",
+  "steps": 30,
+  "enhance": "stretch",
+  "width": 512,
+  "height": 512,
+  "seed": 17
+}

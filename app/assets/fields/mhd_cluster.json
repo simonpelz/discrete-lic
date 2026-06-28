@@ -1,0 +1,21 @@
+{
+  "name": "mhd_cluster",
+  "bin": "mhd_cluster.bin",
+  "resolution": 1024,
+  "width": 1024,
+  "height": 1024,
+  "channels": 2,
+  "encoding": "float16",
+  "encoded_as": "raw unit [-1,1]",
+  "value_range": [
+    -1.0,
+    1.0
+  ],
+  "unit_normalised": true,
+  "origin": "top-left (row 0 = image top)",
+  "sample_in_shader_at": "vec2(uv.x, 1.0 - uv.y)",
+  "synthetic": true,
+  "source": "synthetic double_vortex + perlin_curl blend",
+  "reason": "forced --synthetic",
+  "note": "PLACEHOLDER. The real yt MHDSloshing bake must be run where the ~1.5 GB sample is available (delete this asset, re-run export_field_assets.py without --synthetic)."
+}

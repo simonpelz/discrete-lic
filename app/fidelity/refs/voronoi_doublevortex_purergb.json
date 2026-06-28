@@ -1,0 +1,13 @@
+{
+  "field": "double_vortex",
+  "pixel_mode": "voronoi",
+  "voronoi_cells": 1200,
+  "color": "pure_rgb",
+  "pure_mode": "stochastic",
+  "pure_sharpen": 4.1,
+  "steps": 37,
+  "enhance": "stretch",
+  "width": 512,
+  "height": 512,
+  "seed": 17
+}

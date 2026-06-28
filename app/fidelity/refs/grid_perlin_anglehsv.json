@@ -1,0 +1,13 @@
+{
+  "field": "perlin_curl",
+  "pixel_mode": "grid",
+  "noise": "white",
+  "color": "angle_hsv",
+  "sat": 0.9,
+  "steps": 40,
+  "kernel": "gaussian",
+  "enhance": "stretch",
+  "width": 512,
+  "height": 512,
+  "seed": 17
+}

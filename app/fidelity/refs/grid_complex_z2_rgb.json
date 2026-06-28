@@ -1,0 +1,12 @@
+{
+  "field": "complex",
+  "field_expr": "z**2",
+  "pixel_mode": "grid",
+  "noise": "white_rgb",
+  "color": "rgb",
+  "steps": 30,
+  "enhance": "stretch",
+  "width": 512,
+  "height": 512,
+  "seed": 17
+}
