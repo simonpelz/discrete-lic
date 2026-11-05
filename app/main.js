@@ -43,30 +43,35 @@ async function loadGallery() {
   }
 
   if (items === null) {
-    grid.innerHTML = '<p style="color:var(--muted);font-family:var(--font-mono)">No gallery manifest found. (gallery.json absent — this is fine.)</p>';
+    grid.innerHTML = '<p class="muted">No plates found (gallery.json is absent, which is fine).</p>';
     return;
   }
 
   if (!Array.isArray(items) || !items.length) {
-    grid.innerHTML = '<p style="color:var(--muted);font-family:var(--font-mono)">Gallery is empty.</p>';
+    grid.innerHTML = '<p class="muted">No plates yet.</p>';
     return;
   }
 
   grid.innerHTML = "";
-  items.forEach(item => {
+  items.forEach((item, i) => {
     const url = base + item.filename;
-    const el = document.createElement("div");
+    const label = item.caption || item.filename;
+    const el = document.createElement("figure");
     el.className = "gallery-item";
     const img = document.createElement("img");
     img.src = url;
     img.alt = item.caption || "";
     img.loading = "lazy";
-    const cap = document.createElement("div");
+    const cap = document.createElement("figcaption");
     cap.className = "gallery-caption";
-    cap.textContent = item.caption || item.filename;
+    const num = document.createElement("b");
+    num.textContent = `Pl. ${i + 1}`;
+    const txt = document.createElement("span");
+    txt.textContent = label;
+    cap.append(num, txt);
     el.appendChild(img);
     el.appendChild(cap);
-    img.addEventListener("click", () => openLightbox(url));
+    img.addEventListener("click", () => openLightbox(url, `Pl. ${i + 1}\u2003${label}`));
     grid.appendChild(el);
   });
 }
@@ -75,11 +80,15 @@ async function loadGallery() {
 
 const lightbox = document.getElementById("lightbox");
 const lightboxImg = document.getElementById("lightbox-img");
+const lightboxCap = document.getElementById("lightbox-cap");
 
-function openLightbox(src) {
+function openLightbox(src, caption = "") {
   lightboxImg.src = src;
+  lightboxCap.textContent = caption;
   lightbox.classList.add("open");
 }
+
+lightboxImg.addEventListener("click", () => lightbox.classList.remove("open"));
 
 document.getElementById("lightbox-close").addEventListener("click", () => lightbox.classList.remove("open"));
 lightbox.addEventListener("click", e => { if (e.target === lightbox) lightbox.classList.remove("open"); });
@@ -172,6 +181,17 @@ const status      = document.getElementById("status-text");
 const canvas      = document.getElementById("result-canvas");
 const actions     = document.getElementById("result-actions");
 const placeholder = document.getElementById("result-placeholder");
+const resultTitle = document.getElementById("result-title");
+
+// Plate-style caption describing what is on the canvas.
+function describe(p) {
+  const field = p.field === "complex" ? `f(z) = ${p.field_expr}` : p.field.replace(/_/g, " ");
+  let color = p.color;
+  if (p.color === "colormap") color = p.colormap;
+  if (p.color === "pure_rgb") color = `pure rgb, ${p.pure_mode}`;
+  const pixels = p.pixel_mode === "voronoi" ? `${p.voronoi_cells} cells` : "grid";
+  return `${field}, ${color}, ${pixels}, seed ${p.seed}`;
+}
 
 let ctx = null;        // pipeline context (created lazily, once)
 let ctxError = null;   // init failure message, if any
@@ -190,7 +210,7 @@ function ensureCtx() {
 async function render() {
   if (!ensureCtx()) {
     placeholder.style.display = "flex";
-    placeholder.textContent = `WebGL2 error: ${ctxError}`;
+    placeholder.textContent = `WebGL2 is not available here: ${ctxError}`;
     canvas.style.display = "none";
     actions.style.display = "none";
     status.textContent = "";
@@ -198,7 +218,7 @@ async function render() {
   }
 
   const params = buildParams();
-  status.innerHTML = '<span class="spinner"></span> Rendering…';
+  status.innerHTML = '<span class="spinner" aria-hidden="true"><i></i><i></i><i></i></span>rendering';
   const t0 = performance.now();
 
   try {
@@ -212,7 +232,7 @@ async function render() {
     }
   } catch (err) {
     placeholder.style.display = "flex";
-    placeholder.textContent = `Render error: ${err && err.message ? err.message : err}`;
+    placeholder.textContent = `Could not render: ${err && err.message ? err.message : err}`;
     canvas.style.display = "none";
     actions.style.display = "none";
     status.textContent = "";
@@ -225,7 +245,8 @@ async function render() {
   canvas.style.display = "block";
   actions.style.display = "flex";
   hasRendered = true;
-  status.textContent = `Rendered in ${elapsed} s`;
+  resultTitle.textContent = describe(params);
+  status.textContent = `${elapsed} s`;
 }
 
 // Debounced scheduler. Voronoi is heavier → longer debounce.
